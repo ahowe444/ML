@@ -81,13 +81,24 @@ class MCPerceptron(MCModel):
                     argmax = i
             label = y[j]
             if argmax != label:
-                self.W[argmax] = self.W[argmax] - lr * X[j]
-                self.W[label] = self.W[label] - lr * X[j]
-
+                self.W[argmax] = self.W[argmax] - lr * np.ravel(X[j].todense())
+                self.W[label] = self.W[label] + lr * np.ravel(X[j].todense())
+        print(type(y))
+        print(y.shape)
+    
     def predict(self, X):
         X = self._fix_test_feats(X)
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        y = np.zeros(X.shape[0], dtype=np.float)
+        for j in range(X.shape[0]):
+            maxvalue = 0
+            argmax = 0
+            for i in range(self.W.shape[0]):
+                pred = np.dot(self.W[i], np.ravel(X[j].todense()))
+                if pred > maxvalue:
+                    maxvalue = pred
+                    argmax = i
+            y[j] = argmax
+        return y
 
 
 class MCLogistic(MCModel):
