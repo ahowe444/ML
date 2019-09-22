@@ -73,7 +73,37 @@ class MCPerceptron(MCModel):
 
     def fit(self, *, X, y, lr):
         # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        # train.mc.perceptron
+        #---------------------
+        # 200 rows of examples, 617 columns of features
+        # X[0] is the first example, a scipy csr matrix indexed (0,0 -> (0,617)
+        # y[0] is the first label(ndarray)
+        # W is an ndarray 26x617, one row for each letter, 617 rows for each feature
+        
+        # pseudocode
+        #-----------
+        # for each example in X:
+            # do w . x_i for each row of W and find the maximum prediction 
+            # and return that k value as our predicted y-hat
+
+            # check the actual label, if !=:
+                # update the w sub k of the prediction
+                # update the w sub k of the actual label
+                # according to the update rules, and pop these back into W
+
+        # Remember that features are 1-indexed, but the W matrix is 0 indexed.
+        for j in range(X.shape[0]):
+            maxvalue = 0
+            argmax = 0
+            for i in range(W.shape[0]):
+                pred = np.dot(W[i], X[j])
+                if pred > maxvalue:
+                    maxvalue = pred
+                    argmax = i
+            label = y[j]
+            if argmax != label:
+                W[argmax] = W[argmax] - lr * X[j]
+                W[label] = W[label] - lr * X[j]
 
     def predict(self, X):
         X = self._fix_test_feats(X)
