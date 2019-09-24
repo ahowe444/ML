@@ -73,7 +73,7 @@ class MCPerceptron(MCModel):
 
     def fit(self, *, X, y, lr):
         for j in range(X.shape[0]):
-            maxvalue = 0
+            maxvalue = float("-inf")
             argmax = 0
             for i in range(self.W.shape[0]):
                 pred = np.dot(self.W[i], np.ravel(X[j].todense()))
@@ -82,14 +82,14 @@ class MCPerceptron(MCModel):
                     argmax = i
             label = y[j]
             if argmax != label:
-                self.W[argmax] = self.W[argmax] - lr * np.ravel(X[j].todense())
-                self.W[label] = self.W[label] + lr * np.ravel(X[j].todense())
+                self.W[argmax] = self.W[argmax] - (lr * np.ravel(X[j].todense()))
+                self.W[label] = self.W[label] + (lr * np.ravel(X[j].todense()))
     
     def predict(self, X):
         X = self._fix_test_feats(X)
         y = np.zeros(X.shape[0], dtype=np.float)
         for j in range(X.shape[0]):
-            maxvalue = 0
+            maxvalue = float("-inf")
             argmax = 0
             for i in range(self.W.shape[0]):
                 pred = np.dot(self.W[i], np.ravel(X[j].todense()))
@@ -100,7 +100,7 @@ class MCPerceptron(MCModel):
         return y
 
     def score(self, x):
-        return np.dot(self.W[0], x)
+        return np.dot(self.W[1], x)
 
 
 class MCLogistic(MCModel):
@@ -127,7 +127,7 @@ class MCLogistic(MCModel):
         X = self._fix_test_feats(X)
         y = np.zeros(X.shape[0], dtype=np.float)
         for j in range(X.shape[0]):
-            maxvalue = 0
+            maxvalue = float("-inf")
             argmax = 0
             for i in range(self.W.shape[0]):
                 pred = np.dot(self.W[i], np.ravel(X[j].todense()))
@@ -142,7 +142,7 @@ class MCLogistic(MCModel):
         return logits/sum(logits)
 
     def score(self, x):
-        return np.dot(self.W[0], x)
+        return np.dot(self.W[1], x)
 
 class OneVsAll(Model):
 
@@ -158,17 +158,14 @@ class OneVsAll(Model):
             y_i = np.zeros(len(y), dtype=np.int)
             for j in range(len(y)):
                 if y[j] == i:
-                    y_i[j] = 0
-                else:
                     y_i[j] = 1
             model.fit(X=X, y=y_i, lr=lr)
-            print(model.W)
  
     def predict(self, X):
         X = self._fix_test_feats(X)
-        y = np.zeros(X.shape[0], dtype=np.float)
+        y = np.zeros(X.shape[0], dtype=np.int)
         for j in range(X.shape[0]):
-            maxvalue = 0
+            maxvalue = float("-inf")
             argmax = 0
             for i in range(len(self.models)):
                 model = self.models[i]
