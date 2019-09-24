@@ -3,7 +3,8 @@ Keep model implementations in here.
 
 This file is where you will write most of your code!
 """
-
+# TO DO - implement a prediction helper method since perceptron and mclogistic 
+# have the same predictor
 import numpy as np
 
 class Model(object):
@@ -83,8 +84,6 @@ class MCPerceptron(MCModel):
             if argmax != label:
                 self.W[argmax] = self.W[argmax] - lr * np.ravel(X[j].todense())
                 self.W[label] = self.W[label] + lr * np.ravel(X[j].todense())
-        print(type(y))
-        print(y.shape)
     
     def predict(self, X):
         X = self._fix_test_feats(X)
@@ -100,6 +99,9 @@ class MCPerceptron(MCModel):
             y[j] = argmax
         return y
 
+    def score(self, x):
+        return np.dot(self.W[0], x)
+
 
 class MCLogistic(MCModel):
 
@@ -108,18 +110,39 @@ class MCLogistic(MCModel):
         self.W = np.zeros((nclasses, nfeatures), dtype=np.float)
 
     def fit(self, *, X, y, lr):
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
-
+        logits = np.zeros(self.W.shape[0], dtype=np.float)
+        for j in range(X.shape[0]):
+            label = y[j]
+            example = np.ravel(X[j].todense())
+            for k in range(self.W.shape[0]):
+                logits[k] = np.dot(self.W[k], example)
+            softmax = self.softmax(logits)
+            for k in range(self.W.shape[0]):
+                if(k == label):
+                    self.W[k] = self.W[k] + (lr*(example - softmax[k]*example)) 
+                else:
+                    self.W[k] = self.W[k] + (lr*(-1 * softmax[k]*example))
+                
     def predict(self, X):
         X = self._fix_test_feats(X)
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        y = np.zeros(X.shape[0], dtype=np.float)
+        for j in range(X.shape[0]):
+            maxvalue = 0
+            argmax = 0
+            for i in range(self.W.shape[0]):
+                pred = np.dot(self.W[i], np.ravel(X[j].todense()))
+                if pred > maxvalue:
+                    maxvalue = pred
+                    argmax = i
+            y[j] = argmax
+        return y
 
     def softmax(self, logits):
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        logits = np.exp(logits - max(logits))
+        return logits/sum(logits)
 
+    def score(self, x):
+        return np.dot(self.W[0], x)
 
 class OneVsAll(Model):
 
@@ -130,10 +153,28 @@ class OneVsAll(Model):
         self.models = [model_class(nfeatures=nfeatures, nclasses=2) for _ in range(nclasses)]
 
     def fit(self, *, X, y, lr):
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
-
+        for i in range(len(self.models)):
+            model = self.models[i]
+            y_i = np.zeros(len(y), dtype=np.int)
+            for j in range(len(y)):
+                if y[j] == i:
+                    y_i[j] = 0
+                else:
+                    y_i[j] = 1
+            model.fit(X=X, y=y_i, lr=lr)
+            print(model.W)
+ 
     def predict(self, X):
         X = self._fix_test_feats(X)
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        y = np.zeros(X.shape[0], dtype=np.float)
+        for j in range(X.shape[0]):
+            maxvalue = 0
+            argmax = 0
+            for i in range(len(self.models)):
+                model = self.models[i]
+                pred = model.score(np.ravel(X[j].todense()))
+                if pred > maxvalue:
+                    maxvalue = pred
+                    argmax = i
+            y[j] = argmax
+        return y
