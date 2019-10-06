@@ -1,0 +1,75 @@
+Leaf: False
+Depth: 0
+Feature: 26
+Theta: 3.0
+
+Leaf: False
+Depth: 1
+Feature: 17
+Theta: 1412.0
+
+Leaf: False
+Depth: 2
+Feature: 12
+Theta: 1003.0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: False
+Depth: 2
+Feature: 26
+Theta: 2.0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: False
+Depth: 1
+Feature: 9
+Theta: 1330.0
+
+Leaf: False
+Depth: 2
+Feature: 8
+Theta: 1993.0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: False
+Depth: 2
+Feature: 11
+Theta: 989.0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
+Leaf: True
+Depth: 3
+Feature: 0
+Theta: 0
+
