@@ -20,7 +20,7 @@ class RegressionTree(object):
             self.mean = 0
 
         def print_(self):
-            print("Leaf: " + str(self.leaf) + '\n' + "Depth: " + str(self.depth) + '\n' + "Feature: " + str(self.d) + '\n' + "Theta: " + str(self.theta) + '\n')
+            print("Leaf: " + str(self.leaf) + '\n' + "Depth: " + str(self.depth) + '\n' + "Feature: " + str(self.d) + '\n' + "Theta: " + str(self.theta) + '\n' + "Mean: " + str(self.mean) + '\n')
 
         def printTree(self):
             self.print_()
@@ -92,7 +92,6 @@ class RegressionTree(object):
         root.right = self.Node(root.depth + 1)
         self.buildTree(root.left, X_left, y_left)
         self.buildTree(root.right, X_right, y_right) 
-        return
  
     def fit(self, *, X, y):
         """ Fit the model.
@@ -103,7 +102,7 @@ class RegressionTree(object):
         """
         self.root = self.Node(0)
         self.buildTree(self.root, X, y)
-        self.root.printTree()
+        #self.root.printTree()
 
     def predict(self, X):
         """ Predict.
@@ -113,10 +112,16 @@ class RegressionTree(object):
         Returns:
                 An array of floats with shape [num_examples].
         """
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
-
-
+        y = []
+        for row in X:
+            node = self.root
+            while(node.leaf != True):
+                if(row[node.d] < node.theta):
+                    node = node.left
+                else:
+                    node = node.right
+            y.append(node.mean)
+        return np.array(y, dtype=float)
 
 class GradientBoostedRegressionTree(object):
     def __init__(self, nfeatures, max_depth, n_estimators, regularization_parameter):
