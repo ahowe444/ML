@@ -18,16 +18,7 @@ class RegressionTree(object):
             self.d = 0
             self.theta = 0
             self.mean = 0
-
-        def print_(self):
-            print("Leaf: " + str(self.leaf) + '\n' + "Depth: " + str(self.depth) + '\n' + "Feature: " + str(self.d) + '\n' + "Theta: " + str(self.theta) + '\n' + "Mean: " + str(self.mean) + '\n')
-
-        def printTree(self):
-            self.print_()
-            if not self.leaf:
-                self.left.printTree()
-                self.right.printTree()
-
+    
     def __init__(self, nfeatures, max_depth):
         self.num_input_features = nfeatures
         self.max_depth = max_depth
@@ -102,7 +93,6 @@ class RegressionTree(object):
         """
         self.root = self.Node(0)
         self.buildTree(self.root, X, y)
-        #self.root.printTree()
 
     def predict(self, X):
         """ Predict.
