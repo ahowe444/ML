@@ -119,6 +119,8 @@ class GradientBoostedRegressionTree(object):
         self.max_depth = max_depth
         self.n_estimators = n_estimators
         self.regularization_parameter = regularization_parameter
+        self.model = []
+    
     def fit(self, *, X, y):
         """ Fit the model.
                 Args:
@@ -127,9 +129,14 @@ class GradientBoostedRegressionTree(object):
                 max_depth: An int representing the maximum depth of the tree
                 n_estimators: An int representing the number of regression trees to iteratively fit
         """
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
-
+        F0 = np.mean(y)
+        self.model.append(F0)
+        for i in range(self.n_estimators):
+            g = y - self.predict(X)
+            h = RegressionTree(self.num_input_features, self.max_depth)
+            h.fit(X=X, y=g)
+            self.model.append(h)
+    
     def predict(self, X):
         """ Predict.
         Args:
@@ -138,5 +145,7 @@ class GradientBoostedRegressionTree(object):
         Returns:
                 An array of floats with shape [num_examples].
         """
-        # TODO: Implement this!
-        raise Exception("You must implement this method!")
+        y = np.zeros(X.shape[0])
+        for i in range(1, len(self.model)):
+            y += self.model[i].predict(X)
+        return self.model[0] + self.regularization_parameter * y
